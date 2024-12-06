@@ -17,6 +17,7 @@ This guide provides a comprehensive explanation of managing Linux process priori
 - [SELinux Enforcement Modes](#selinux-enforcement-modes)
 - [Disabling SELinux](#disabling-selinux)
 - [SELinux Security Scope](#selinux-security-scope)
+- [SELinux File Contexts and Managing Permissions](#selinux-file-contexts-and-mangaging-permission)
 
 # 1.Process Management
 ## A.View Processes
@@ -190,23 +191,81 @@ Each file is assigned a security context, preventing unauthorized access even by
 SELinux restricts network services to operate only on designated ports, ensuring safe communication.
 
 ---
-### Example Usage
+## E. SELinux File Contexts and Managing Permissions
 
-- Protecting Files and Folders:
+### a) Viewing SELinux Contexts on Files
+You can check the SELinux context of files using the ls -z command. The SELinux context includes three parts: user, role, and type. For example, running the following commands:
 
-a) Set appropriate security contexts for files and folders:
- 
-chcon -t httpd_sys_content_t /var/www/html
+![Screenshot from 2024-12-07 00-27-53](https://github.com/user-attachments/assets/e6256b54-1c11-43cb-8d17-0993e34999ec)
 
-b) Restore default contexts if needed:
+Explanation:
 
-restorecon -R /var/www/html
+unconfined_u:object_r:admin_home_t:s0: This is the SELinux context of the files new and x. It indicates that the files are labeled for user unconfined_u with the object role object_r and the type admin_home_t.
 
-- Managing Ports:
 
-a) Allow an application to bind to a specific port:
 
-semanage port -a -t http_port_t -p tcp 8080
+### b) Understanding Apache SELinux Contexts
+When working with web content, such as files in /var/www/, you'll see the SELinux contexts related to Apache:
+
+![Screenshot from 2024-12-07 00-32-24](https://github.com/user-attachments/assets/bf20f061-26d8-4c18-af78-2a254c698fab)
+
+Explanation:
+
+httpd_sys_script_exec_t: Used for scripts executed by Apache (e.g., CGI scripts in the cgi-bin directory).
+httpd_sys_content_t: Used for web content that Apache serves (e.g., HTML files in the html directory).
+
+### c) Setting SELinux Context
+
+If you need to change the SELinux context of a file, you can use chcon. For example, to change the context of a file to httpd_sys_content_t (which is appropriate for files served by Apache), you can run:
+
+![Screenshot from 2024-12-07 00-35-40](https://github.com/user-attachments/assets/7c719cb3-3329-45d8-9816-c7485f5ee058)
+
+
+This changes the type of the file new to httpd_sys_content_t, which is used for web content served by Apache.
+
+**To restore the default context settings on a file or directory, use restorecon**:
+
+![Screenshot from 2024-12-07 00-37-53](https://github.com/user-attachments/assets/28571647-b809-40a3-a61c-5f406571f71c)
+
+
+This will revert the file new to its default SELinux context based on its location and the security policy.
+
+### d) Managing SELinux Booleans
+SELinux policies are often controlled through booleans, which allow system administrators to control certain permissions without modifying the policy. For example, to disable the zoneminder_run_sudo boolean temporarily, you can use:
+
+![Screenshot from 2024-12-07 00-53-22](https://github.com/user-attachments/assets/abe70a8e-ddaf-47fe-8d3c-ccd3262d9a69)
+
+![Screenshot from 2024-12-07 00-56-12](https://github.com/user-attachments/assets/8f2ff037-43f2-4947-b4ac-e3da36a93a4b)
+
+![Screenshot from 2024-12-07 00-58-14](https://github.com/user-attachments/assets/a9d94000-5f3f-4a47-bf9e-e001b3f0b397)
+
+
+setsebool zoneminder_run_sudo off
+This command temporarily turns off the zoneminder_run_sudo boolean, which can prevent the service from running with elevated privileges.
+
+To make the change persistent across reboots, use the -P flag:
+
+![Screenshot from 2024-12-07 00-48-51](https://github.com/user-attachments/assets/b7e1720f-7e68-4a06-adf9-463324f4b98f)
+![Screenshot from 2024-12-07 00-49-41](https://github.com/user-attachments/assets/b928d007-1cfa-4cc1-b2b4-47f894d8c8ec)
+
+
+This command sets the zoneminder_run_sudo boolean permanently to "off" across system reboots.
+
+5. Common SELinux Management Commands
+Viewing the status of SELinux booleans:
+
+![Screenshot from 2024-12-07 00-42-38](https://github.com/user-attachments/assets/c628ca29-17c7-4a1a-a369-d62d2e242176)
+
+
+This command shows the current status of all SELinux booleans on the system.
+
+To temporarily change a boolean:
+
+setsebool <boolean_name> <on|off>
+
+To permanently change a boolean:
+
+setsebool -P <boolean_name> <on|off>
 
 ### Notes
 - Use getenforce and setenforce for temporary mode changes without rebooting.
