@@ -4,20 +4,20 @@ This guide provides a comprehensive explanation of managing Linux process priori
 
 # Table of Contents
 
-[1.Process Management](#process-management)
+[1.Process Management](#1process-management)
 
-- [View Processes](#view-processes)
-- [Understanding PRI and NI](#understanding-pri-and-ni)
-- [Changing Process Priority with Nice](#changing-process-priority-with-nice)
-- [Modifying Priority of a Running Process with Renice](#modifying-priority-of-a-running-process-with-renice)
+- [View Processes](#aview-processes)
+- [Understanding PRI and NI](#bunderstanding-pri-and-ni)
+- [Changing Process Priority with Nice](#cchanging-process-priority-with-nice)
+- [Modifying Priority of a Running Process with Renice](#dmodifying-priority-of-a-running-process-with-renice)
 
-[2.SELinux Overview](#selinux-overview)
+[2.SELinux Overview](#2selinux-overview)
 
-- [What is SELinux?](#what-is-selinx)
-- [SELinux Enforcement Modes](#selinux-enforcement-modes)
-- [Disabling SELinux](#disabling-selinux)
-- [SELinux Security Scope](#selinux-security-scope)
-- [SELinux File Contexts and Managing Permissions](#selinux-file-contexts-and-mangaging-permission)
+- [What is SELinux?](#awhat-is-selinux)
+- [SELinux Enforcement Modes](#bselinux-enforcement-modes)
+- [Disabling SELinux](#cdisabling-selinux)
+- [SELinux Security Scope](#dselinux-security-scope)
+- [SELinux File Contexts and Managing Permissions](#e-selinux-file-contexts-and-managing-permissions)
 
 # 1.Process Management
 ## A.View Processes
